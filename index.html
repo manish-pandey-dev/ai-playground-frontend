@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Playground</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
+            color: #ffffff;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #2d2d2d;
+            border-bottom: 1px solid #404040;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stats {
+            font-size: 0.875rem;
+            color: #9ca3af;
+        }
+
+        .stats .remaining {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            height: calc(100vh - 80px);
+            gap: 1.5rem;
+            padding: 1.5rem;
+        }
+
+        .sidebar {
+            background: #2d2d2d;
+            border: 1px solid #404040;
+            border-radius: 12px;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #e5e7eb;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            background: #1a1a1a;
+            border: 1px solid #404040;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.875rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .range-input {
+            width: 100%;
+            margin: 0.5rem 0;
+        }
+
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #9ca3af;
+            margin-top: 0.25rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .chat-container {
+            background: #2d2d2d;
+            border: 1px solid #404040;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .welcome {
+            text-align: center;
+            padding: 3rem 1.5rem;
+        }
+
+        .welcome h3 {
+            font-size: 1.125rem;
+            color: #9ca3af;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome p {
+            color: #6b7280;
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.ai, .message.error {
+            justify-content: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .message.user .message-bubble {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .message.ai .message-bubble {
+            background: #374151;
+            color: #e5e7eb;
+        }
+
+        .message.error .message-bubble {
+            background: #dc2626;
+            color: white;
+        }
+
+        .message-header {
+            font-size: 0.75rem;
+            opacity: 0.75;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .message-footer {
+            font-size: 0.75rem;
+            opacity: 0.75;
+            margin-top: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            opacity: 0.75;
+            font-size: 0.75rem;
+        }
+
+        .copy-btn:hover {
+            opacity: 1;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: #374151;
+            border-radius: 12px;
+            max-width: fit-content;
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .loading-dot {
+            width: 8px;
+            height: 8px;
+            background: #3b82f6;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+
+        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .error-banner {
+            background: #fef2f2;
+            border-top: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .input-area {
+            padding: 1.5rem;
+            border-top: 1px solid #404040;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: #1a1a1a;
+            border: 1px solid #404040;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.875rem;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .input-field:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .send-btn {
+            padding: 0.75rem 1.5rem;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            background: #2563eb;
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+            }
+            
+            .sidebar {
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">🧠</div>
+                <div class="logo-text">AI Playground</div>
+            </div>
+            <div class="stats">
+                <span class="remaining" id="remaining-requests">--</span> requests left
+            </div>
+        </div>
+
+        <!-- Main Container -->
+        <div class="main-container">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <h2>⚙️ Settings</h2>
+                
+                <div class="form-group">
+                    <label for="model-select">AI Model</label>
+                    <select id="model-select" class="form-control">
+                        <option value="">Loading models...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="max-tokens">Max Tokens: <span id="tokens-value">150</span></label>
+                    <input 
+                        type="range" 
+                        id="max-tokens" 
+                        class="range-input" 
+                        min="50" 
+                        max="1000" 
+                        value="150"
+                    >
+                    <div class="range-labels">
+                        <span>50</span>
+                        <span>1000</span>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-row">
+                        <span>Daily Used:</span>
+                        <span id="daily-used">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Rate Limit:</span>
+                        <span id="rate-limit">0/hr</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Container -->
+            <div class="chat-container">
+                <!-- Messages Area -->
+                <div class="messages-area" id="messages">
+                    <div class="welcome">
+                        <h3>Welcome to AI Playground!</h3>
+                        <p>Select a model and start chatting with AI</p>
+                    </div>
+                </div>
+
+                <!-- Error Banner -->
+                <div id="error-banner" class="error-banner" style="display: none;">
+                    ⚠️ <span id="error-text"></span>
+                </div>
+
+                <!-- Input Area -->
+                <div class="input-area">
+                    <input 
+                        type="text" 
+                        id="message-input" 
+                        class="input-field" 
+                        placeholder="Type your message..."
+                    >
+                    <button id="send-btn" class="send-btn">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class AIPlayground {
+            constructor() {
+                this.API_BASE = 'https://ai-playground-421016501960.europe-west4.run.app';
+                this.messages = [];
+                this.isLoading = false;
+                this.selectedModel = '';
+                this.maxTokens = 150;
+                
+                this.initElements();
+                this.initEventListeners();
+                this.fetchModels();
+                this.fetchStats();
+            }
+
+            initElements() {
+                this.modelSelect = document.getElementById('model-select');
+                this.maxTokensSlider = document.getElementById('max-tokens');
+                this.tokensValue = document.getElementById('tokens-value');
+                this.messagesArea = document.getElementById('messages');
+                this.messageInput = document.getElementById('message-input');
+                this.sendBtn = document.getElementById('send-btn');
+                this.errorBanner = document.getElementById('error-banner');
+                this.errorText = document.getElementById('error-text');
+                this.remainingRequests = document.getElementById('remaining-requests');
+                this.dailyUsed = document.getElementById('daily-used');
+                this.rateLimit = document.getElementById('rate-limit');
+            }
+
+            initEventListeners() {
+                this.sendBtn.addEventListener('click', () => this.sendMessage());
+                this.messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.sendMessage();
+                });
+                
+                this.modelSelect.addEventListener('change', (e) => {
+                    this.selectedModel = e.target.value;
+                });
+                
+                this.maxTokensSlider.addEventListener('input', (e) => {
+                    this.maxTokens = parseInt(e.target.value);
+                    this.tokensValue.textContent = this.maxTokens;
+                });
+            }
+
+            async fetchModels() {
+                try {
+                    const response = await fetch(`${this.API_BASE}/models`);
+                    const data = await response.json();
+                    
+                    if (data.models) {
+                        this.modelSelect.innerHTML = '';
+                        data.models.forEach(model => {
+                            const option = document.createElement('option');
+                            option.value = model;
+                            option.textContent = model;
+                            this.modelSelect.appendChild(option);
+                        });
+                        
+                        if (data.models.length > 0) {
+                            this.selectedModel = data.models[0];
+                            this.modelSelect.value = this.selectedModel;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch models:', error);
+                    this.showError('Failed to load available models');
+                }
+            }
+
+            async fetchStats() {
+                try {
+                    const response = await fetch(`${this.API_BASE}/stats`);
+                    const data = await response.json();
+                    
+                    this.remainingRequests.textContent = data.daily_requests_remaining || '--';
+                    this.dailyUsed.textContent = data.daily_requests_used || 0;
+                    this.rateLimit.textContent = `${data.rate_limit_per_ip_per_hour || 0}/hr`;
+                } catch (error) {
+                    console.error('Failed to fetch stats:', error);
+                }
+            }
+
+            async sendMessage() {
+                const message = this.messageInput.value.trim();
+                if (!message || !this.selectedModel || this.isLoading) return;
+
+                // Add user message
+                this.addMessage({
+                    type: 'user',
+                    content: message,
+                    timestamp: new Date()
+                });
+
+                this.messageInput.value = '';
+                this.setLoading(true);
+                this.hideError();
+
+                // Show loading indicator
+                this.showLoading();
+
+                try {
+                    const response = await fetch(`${this.API_BASE}/ask-ai`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            model: this.selectedModel,
+                            prompt: message,
+                            max_tokens: this.maxTokens
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    // Remove loading indicator
+                    this.hideLoading();
+
+                    if (data.error) {
+                        this.showError(data.error);
+                        this.addMessage({
+                            type: 'error',
+                            content: data.error,
+                            timestamp: new Date()
+                        });
+                    } else {
+                        this.addMessage({
+                            type: 'ai',
+                            content: data.response,
+                            model: data.model_used,
+                            timestamp: new Date()
+                        });
+                    }
+
+                    this.fetchStats();
+                } catch (error) {
+                    this.hideLoading();
+                    this.showError('Failed to send message');
+                    this.addMessage({
+                        type: 'error',
+                        content: 'Failed to send message. Please try again.',
+                        timestamp: new Date()
+                    });
+                } finally {
+                    this.setLoading(false);
+                }
+            }
+
+            addMessage(message) {
+                this.messages.push(message);
+                
+                // Remove welcome message if it exists
+                const welcome = this.messagesArea.querySelector('.welcome');
+                if (welcome) {
+                    welcome.remove();
+                }
+
+                const messageEl = document.createElement('div');
+                messageEl.className = `message ${message.type}`;
+                
+                const bubble = document.createElement('div');
+                bubble.className = 'message-bubble';
+                
+                let content = '';
+                
+                if (message.type === 'ai') {
+                    content += `<div class="message-header">
+                        <span>🧠 ${message.model}</span>
+                        <span>${this.formatTime(message.timestamp)}</span>
+                    </div>`;
+                }
+                
+                content += `<div>${this.escapeHtml(message.content)}</div>`;
+                
+                content += `<div class="message-footer">
+                    <span>${this.formatTime(message.timestamp)}</span>`;
+                
+                if (message.type !== 'user') {
+                    content += `<button class="copy-btn" onclick="navigator.clipboard.writeText('${this.escapeHtml(message.content)}')">📋 Copy</button>`;
+                }
+                
+                content += '</div>';
+                
+                bubble.innerHTML = content;
+                messageEl.appendChild(bubble);
+                this.messagesArea.appendChild(messageEl);
+                
+                // Scroll to bottom
+                this.messagesArea.scrollTop = this.messagesArea.scrollHeight;
+            }
+
+            showLoading() {
+                const loadingEl = document.createElement('div');
+                loadingEl.className = 'loading';
+                loadingEl.id = 'loading-indicator';
+                loadingEl.innerHTML = `
+                    <div class="loading-dots">
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                    </div>
+                    <span>AI is thinking...</span>
+                `;
+                this.messagesArea.appendChild(loadingEl);
+                this.messagesArea.scrollTop = this.messagesArea.scrollHeight;
+            }
+
+            hideLoading() {
+                const loading = document.getElementById('loading-indicator');
+                if (loading) {
+                    loading.remove();
+                }
+            }
+
+            setLoading(loading) {
+                this.isLoading = loading;
+                this.sendBtn.disabled = loading;
+                this.messageInput.disabled = loading;
+            }
+
+            showError(message) {
+                this.errorText.textContent = message;
+                this.errorBanner.style.display = 'flex';
+            }
+
+            hideError() {
+                this.errorBanner.style.display = 'none';
+            }
+
+            formatTime(date) {
+                return date.toLocaleTimeString();
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        // Initialize the app when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new AIPlayground();
+        });
+    </script>
+</body>
+</html>
