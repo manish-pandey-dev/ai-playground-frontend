@@ -1,5 +1,5 @@
 # .github/workflows/deploy.yml
-# Fixed workflow - uses npm install instead of npm ci
+# Updated with latest GitHub Action versions
 
 name: 🚀 Deploy AI Playground Frontend
 
@@ -32,7 +32,6 @@ jobs:
 
       - name: 🔧 Install dependencies
         run: npm install
-        # Changed from npm ci to npm install (works without lock file)
 
       - name: 🏗️ Build frontend
         run: npm run build
@@ -44,20 +43,9 @@ jobs:
           echo "✅ Build completed! Contents:"
           ls -la dist/ || ls -la || echo "Checking what was created..."
 
-      - name: 🚀 Deploy to Netlify (if secrets available)
-        if: env.NETLIFY_AUTH_TOKEN != ''
-        uses: nwtgck/actions-netlify@v3.0
-        with:
-          publish-dir: './dist'
-          production-branch: main
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: "🚀 Auto-deploy from GitHub - ${{ github.event.head_commit.message }}"
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-
-      - name: 📤 Upload build artifacts (backup)
-        uses: actions/upload-artifact@v3
+      - name: 📤 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        # Updated from v3 to v4 (latest version)
         with:
           name: frontend-build
           path: dist/
@@ -65,5 +53,6 @@ jobs:
 
       - name: 🎉 Success notification
         run: |
-          echo "🎊 AI Playground Frontend processed successfully!"
+          echo "🎊 AI Playground Frontend built successfully!"
           echo "📱 Ready for Devanshi to test!"
+          echo "🔗 Artifact uploaded - can be downloaded from Actions tab"
