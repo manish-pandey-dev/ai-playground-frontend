@@ -1,0 +1,77 @@
+# .github/workflows/deploy.yml
+# Automatic deployment of AI Playground Frontend
+
+name: 🚀 Deploy AI Playground Frontend
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    name: 🏗️ Build and Deploy
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 🔧 Install dependencies
+        run: npm ci
+
+      - name: 🏗️ Build frontend
+        run: npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL || 'https://ai-playground-421016501960.europe-west4.run.app' }}
+
+      - name: 🧪 Test build
+        run: |
+          ls -la dist/
+          echo "✅ Build completed successfully!"
+
+      - name: 🚀 Deploy to Netlify
+        uses: nwtgck/actions-netlify@v3.0
+        with:
+          publish-dir: './dist'
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "🚀 Deploy from GitHub Actions - ${{ github.event.head_commit.message }}"
+          enable-pull-request-comment: true
+          enable-commit-comment: true
+          overwrites-pull-request-comment: true
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+      - name: 📱 Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🎉 **Frontend deployed successfully!**
+              
+              🔗 **Preview:** Check the Netlify preview link above
+              📱 **Mobile Test:** Try it on your phone!
+              🧠 **AI Models:** All your AI models should be working
+              
+              Built with ❤️ for Devanshi and friends! ✨`
+            })
+
+      - name: 🎊 Success notification
+        if: success() && github.ref == 'refs/heads/main'
+        run: |
+          echo "🎉 AI Playground Frontend deployed successfully!"
+          echo "🔗 Live at: https://ai-playground-frontend.netlify.app"
+          echo "📱 Mobile optimized for Devanshi!"

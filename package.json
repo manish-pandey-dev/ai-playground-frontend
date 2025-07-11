@@ -1,0 +1,39 @@
+{
+  "name": "ai-playground-frontend",
+  "version": "2.0.0",
+  "description": "Frontend for AI Playground - Multi-AI Chat Platform built for Devanshi! 🧠✨",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 3000",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "npm run build && netlify deploy --prod --dir dist"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "@vitejs/plugin-legacy": "^5.0.0"
+  },
+  "keywords": [
+    "ai",
+    "chatgpt", 
+    "claude",
+    "gemini",
+    "artificial-intelligence",
+    "chat",
+    "playground",
+    "devanshi-approved"
+  ],
+  "author": "Manish Pandey (with brilliant ideas from Devanshi!)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/ai-playground-frontend.git"
+  },
+  "homepage": "https://ai-playground-frontend.netlify.app",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
