@@ -585,7 +585,7 @@
             <div class="header-row">
                 <div class="logo-section">
                     <div class="logo-icon">🧠</div>
-                    <div class="logo-text">AI Playground v2</div>
+                    <div class="logo-text">AI Playground v4</div>
                 </div>
                 <div class="header-controls">
                     <div class="requests-count" id="requests-remaining">996 left</div>
@@ -960,4 +960,9 @@
         }
 
         // Initialize the app when the page loads
-        document.addEventListener('DOMContent
+        document.addEventListener('DOMContentLoaded', () => {
+            new AIPlayground();
+        });
+    </script>
+</body>
+</html>
