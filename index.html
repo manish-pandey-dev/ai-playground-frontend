@@ -2,20 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="description" content="AI Playground - Chat with multiple AI models. Built for Devanshi and friends! 🧠✨">
-    <meta name="keywords" content="AI, ChatGPT, Claude, Gemini, Artificial Intelligence, Chat">
-    <meta name="author" content="Manish Pandey">
-    
-    <!-- Open Graph / Social Media -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="AI Playground - Multi-AI Chat Platform">
-    <meta property="og:description" content="Chat with OpenAI GPT, Anthropic Claude, Google Gemini and more!">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/assets/icons/favicon.ico">
-    <link rel="apple-touch-icon" href="/assets/icons/app-icon-192.png">
-    
     <title>AI Playground - Chat with Multiple AI Models</title>
     
     <style>
@@ -23,124 +11,303 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         :root {
             --primary-bg: #1a1a1a;
             --secondary-bg: #2d2d2d;
             --accent-color: #3b82f6;
-            --accent-gradient: linear-gradient(45deg, #3b82f6, #8b5cf6);
             --text-primary: #ffffff;
             --text-secondary: #9ca3af;
             --border-color: #404040;
             --error-color: #dc2626;
             --success-color: #10b981;
-            --max-tokens: 150; /* Default token limit */
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            -webkit-text-size-adjust: 100%;
+            -webkit-font-smoothing: antialiased;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--primary-bg);
             color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
         }
 
-        /* Mobile-first design */
-        .container {
+        .app {
             display: flex;
             flex-direction: column;
             height: 100vh;
-            max-width: 100vw;
+            height: 100dvh;
+            width: 100vw;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* Header - Mobile Optimized */
+        /* Header with Settings Button */
         .header {
             background: var(--secondary-bg);
+            padding: 12px 16px;
             border-bottom: 1px solid var(--border-color);
-            padding: 0.75rem 1rem;
+            flex-shrink: 0;
+        }
+
+        .header-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(10px);
+            margin-bottom: 8px;
         }
 
-        .logo {
+        .logo-section {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 10px;
         }
 
         .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--accent-gradient);
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            font-size: 18px;
+            flex-shrink: 0;
         }
 
         .logo-text {
-            font-size: 1.1rem;
+            font-size: 18px;
             font-weight: 700;
-            background: var(--accent-gradient);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--text-primary);
         }
 
-        /* Mobile Header Stats - Compact */
-        .header-stats {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            line-height: 1.2;
-        }
-
-        .requests-remaining {
-            color: var(--success-color);
-            font-weight: 600;
-            font-size: 0.8rem;
-        }
-
-        .usage-info {
-            display: flex;
-            gap: 0.75rem;
-            font-size: 0.7rem;
-        }
-
-        /* Model Selector Bar - Mobile */
-        .model-selector-bar {
-            background: var(--secondary-bg);
-            border-bottom: 1px solid var(--border-color);
-            padding: 0.75rem 1rem;
+        .header-controls {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 10px;
+        }
+
+        .requests-count {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--success-color);
+        }
+
+        .settings-btn {
+            width: 32px;
+            height: 32px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 6px;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .settings-btn:active {
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .stats-row {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        /* Settings Panel */
+        .settings-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--secondary-bg);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease-out;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .settings-panel.open {
+            transform: translateY(0);
+        }
+
+        .settings-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .settings-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .close-settings {
+            width: 32px;
+            height: 32px;
+            background: rgba(220, 38, 38, 0.1);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 6px;
+            color: var(--error-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .settings-content {
+            padding: 16px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .setting-group {
+            margin-bottom: 20px;
+        }
+
+        .setting-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .setting-description {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .slider-container {
+            position: relative;
+            margin-top: 8px;
+        }
+
+        .setting-slider {
+            width: 100%;
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .setting-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .setting-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .slider-value {
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .save-settings {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent-color);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+
+        .save-settings:active {
+            background: #2563eb;
+        }
+
+        /* Settings Overlay */
+        .settings-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .settings-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Model Selection */
+        .model-bar {
+            background: var(--secondary-bg);
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+
+        .model-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .model-label {
-            font-size: 0.8rem;
+            font-size: 14px;
             color: var(--text-secondary);
-            font-weight: 500;
-            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .model-select {
             flex: 1;
-            padding: 0.6rem;
+            padding: 10px 12px;
             background: var(--primary-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 6px;
             color: var(--text-primary);
-            font-size: 0.85rem;
+            font-size: 14px;
+            font-family: inherit;
         }
 
         .model-select:focus {
@@ -148,156 +315,128 @@
             border-color: var(--accent-color);
         }
 
-        .tokens-display {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            white-space: nowrap;
-        }
-
-        /* Main Content - Mobile First */
-        .main-content {
+        /* Chat Area */
+        .chat-container {
             flex: 1;
             display: flex;
             flex-direction: column;
+            min-height: 0;
             overflow: hidden;
         }
 
-        /* Chat Area - Takes Full Space */
-        .chat-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: var(--secondary-bg);
-            overflow: hidden;
-        }
-
-        .messages-container {
+        .messages {
             flex: 1;
             overflow-y: auto;
-            padding: 0.75rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            /* Custom scrollbar for mobile */
-            scrollbar-width: thin;
-            scrollbar-color: var(--border-color) transparent;
+            padding: 16px;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
         }
 
-        .messages-container::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .messages-container::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .messages-container::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 2px;
-        }
-
-        .welcome-screen {
+        .welcome {
             text-align: center;
-            padding: 2rem 1rem;
+            padding: 40px 20px;
+            max-width: 350px;
+            margin: 0 auto;
+        }
+
+        .welcome h1 {
+            font-size: 24px;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .welcome p {
+            font-size: 14px;
+            line-height: 1.4;
             color: var(--text-secondary);
         }
 
-        .welcome-title {
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
+        .welcome strong {
             color: var(--text-primary);
         }
 
-        .welcome-subtitle {
-            font-size: 0.85rem;
-        }
-
+        /* Messages */
         .message {
+            margin-bottom: 16px;
             display: flex;
-            margin-bottom: 0.5rem;
         }
 
         .message.user {
             justify-content: flex-end;
         }
 
-        .message.ai, .message.error {
+        .message.ai,
+        .message.error {
             justify-content: flex-start;
         }
 
-        .message-bubble {
-            max-width: 85%;
-            padding: 0.75rem 1rem;
+        .message-content {
+            max-width: 80%;
+            padding: 12px 16px;
             border-radius: 16px;
-            font-size: 0.85rem;
+            font-size: 14px;
             line-height: 1.4;
             word-wrap: break-word;
         }
 
-        .message.user .message-bubble {
+        .message.user .message-content {
             background: var(--accent-color);
             color: white;
             border-bottom-right-radius: 4px;
         }
 
-        .message.ai .message-bubble {
+        .message.ai .message-content {
             background: #374151;
             color: #e5e7eb;
             border-bottom-left-radius: 4px;
         }
 
-        .message.error .message-bubble {
+        .message.error .message-content {
             background: var(--error-color);
             color: white;
         }
 
-        .message-header {
-            font-size: 0.65rem;
+        .message-info {
+            font-size: 10px;
             opacity: 0.8;
-            margin-bottom: 0.4rem;
+            margin-bottom: 6px;
             display: flex;
             justify-content: space-between;
-        }
-
-        .message-footer {
-            font-size: 0.65rem;
-            opacity: 0.7;
-            margin-top: 0.4rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
         .copy-btn {
-            background: none;
+            background: rgba(255, 255, 255, 0.1);
             border: none;
             color: inherit;
-            cursor: pointer;
-            font-size: 0.65rem;
-            opacity: 0.7;
-            padding: 0.2rem;
+            font-size: 10px;
+            padding: 4px 8px;
             border-radius: 4px;
+            cursor: pointer;
+            margin-top: 6px;
+            opacity: 0.8;
         }
 
-        .copy-btn:hover, .copy-btn:active {
-            opacity: 1;
-            background: rgba(255, 255, 255, 0.1);
+        .copy-btn:active {
+            background: rgba(255, 255, 255, 0.2);
         }
 
-        /* Loading Animation */
+        /* Loading */
         .loading {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1rem;
+            gap: 8px;
+            padding: 12px 16px;
             background: #374151;
             border-radius: 16px;
+            border-bottom-left-radius: 4px;
             max-width: fit-content;
         }
 
         .loading-dots {
             display: flex;
-            gap: 0.25rem;
+            gap: 3px;
         }
 
         .loading-dot {
@@ -318,346 +457,186 @@
 
         /* Error Banner */
         .error-banner {
-            background: #fef2f2;
+            background: rgba(220, 38, 38, 0.1);
+            border: 1px solid rgba(220, 38, 38, 0.3);
             color: var(--error-color);
-            padding: 0.75rem;
-            border-top: 1px solid #fecaca;
+            padding: 12px 16px;
+            font-size: 12px;
             display: none;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.8rem;
         }
 
-        /* Input Area - Mobile Optimized */
+        /* Input Area */
         .input-area {
-            padding: 0.75rem;
-            border-top: 1px solid var(--border-color);
             background: var(--secondary-bg);
-            /* Ensure it stays at bottom on mobile keyboards */
+            padding: 12px 16px;
+            border-top: 1px solid var(--border-color);
+            flex-shrink: 0;
             position: relative;
-            z-index: 10;
+            z-index: 100;
+            min-height: 68px;
         }
 
         .input-container {
             display: flex;
-            gap: 0.75rem;
+            gap: 8px;
             align-items: flex-end;
-        }
-
-        .input-field {
-            flex: 1;
-            min-height: 44px; /* Touch-friendly */
-            max-height: 120px; /* Prevent taking too much space */
-            padding: 0.75rem 1rem;
             background: var(--primary-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-size: 16px; /* Prevent zoom on iOS */
-            resize: none;
-            font-family: inherit;
-            line-height: 1.4;
+            border-radius: 20px;
+            padding: 8px 12px;
+            min-height: 44px;
         }
 
-        .input-field:focus {
-            outline: none;
+        .input-container:focus-within {
             border-color: var(--accent-color);
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
         }
 
-        .input-field::placeholder {
+        .message-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 16px;
+            line-height: 1.4;
+            resize: none;
+            min-height: 20px;
+            max-height: 80px;
+            font-family: inherit;
+            padding: 4px 0;
+        }
+
+        .message-input:focus {
+            outline: none;
+        }
+
+        .message-input::placeholder {
             color: var(--text-secondary);
-            opacity: 0.7;
         }
 
-        .send-btn {
-            min-width: 44px; /* Touch-friendly */
-            height: 44px;
+        .send-button {
+            width: 36px;
+            height: 36px;
             background: var(--accent-color);
             border: none;
-            border-radius: 12px;
+            border-radius: 18px;
             color: white;
-            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            transition: background-color 0.2s;
-            flex-shrink: 0; /* Prevent shrinking */
+            cursor: pointer;
+            font-size: 16px;
+            flex-shrink: 0;
+            transition: transform 0.1s;
         }
 
-        .send-btn:hover:not(:disabled) {
-            background: #2563eb;
-        }
-
-        .send-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .send-btn:active {
+        .send-button:active {
             transform: scale(0.95);
         }
 
-        /* Desktop/Tablet Styles */
-        @media (min-width: 768px) {
-            .header {
-                padding: 1rem 2rem;
-            }
-
-            .header-stats {
-                flex-direction: row;
-                align-items: center;
-                gap: 1rem;
-                font-size: 0.875rem;
-            }
-
-            .usage-info {
-                gap: 1rem;
-                font-size: 0.8rem;
-            }
-
-            .main-content {
-                flex-direction: row;
-                gap: 1rem;
-                padding: 1rem;
-                max-width: 1200px;
-                margin: 0 auto;
-            }
-
-            /* Desktop Settings Panel */
-            .desktop-settings {
-                display: block;
-                width: 280px;
-                background: var(--secondary-bg);
-                border: 1px solid var(--border-color);
-                border-radius: 12px;
-                padding: 1.5rem;
-                height: fit-content;
-            }
-
-            .desktop-settings h2 {
-                font-size: 1.125rem;
-                margin-bottom: 1rem;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-
-            .desktop-form-group {
-                margin-bottom: 1.5rem;
-            }
-
-            .desktop-form-group label {
-                display: block;
-                font-size: 0.875rem;
-                font-weight: 500;
-                margin-bottom: 0.5rem;
-                color: var(--text-secondary);
-            }
-
-            .desktop-form-group select {
-                width: 100%;
-                padding: 0.75rem;
-                background: var(--primary-bg);
-                border: 1px solid var(--border-color);
-                border-radius: 8px;
-                color: var(--text-primary);
-                font-size: 0.875rem;
-            }
-
-            .desktop-stats {
-                display: grid;
-                gap: 0.75rem;
-                font-size: 0.875rem;
-            }
-
-            .desktop-stat-item {
-                display: flex;
-                justify-content: space-between;
-                padding: 0.6rem;
-                background: var(--primary-bg);
-                border-radius: 6px;
-            }
-
-            .desktop-stat-value {
-                font-weight: 600;
-                color: var(--accent-color);
-            }
-
-            /* Hide mobile model selector on desktop */
-            .model-selector-bar {
-                display: none;
-            }
-
-            .chat-area {
-                flex: 1;
-                border: 1px solid var(--border-color);
-                border-radius: 12px;
-            }
-
-            .messages-container {
-                padding: 1.5rem;
-                gap: 1rem;
-            }
-
-            .message-bubble {
-                max-width: 70%;
-                font-size: 0.9rem;
-            }
-
-            .input-area {
-                padding: 1rem;
-            }
-
-            .input-container {
-                gap: 1rem;
-            }
-
-            .input-field {
-                font-size: 1rem;
-                padding: 0.875rem 1rem;
-            }
-
-            .send-btn {
-                min-width: 48px;
-                height: 48px;
-            }
-        }
-
-        /* Hide desktop settings on mobile */
-        .desktop-settings {
-            display: none;
-        }
-
-        /* Large Desktop */
-        @media (min-width: 1024px) {
-            .main-content {
-                gap: 1.5rem;
-                padding: 1.5rem;
-            }
-
-            .desktop-settings {
-                width: 320px;
-            }
-        }
-
-        /* Accessibility & UX improvements */
-        @media (prefers-reduced-motion: reduce) {
-            .loading-dot {
-                animation: none;
-            }
-            
-            * {
-                transition: none !important;
-            }
-        }
-
-        @media (prefers-contrast: high) {
-            :root {
-                --border-color: #666666;
-                --text-secondary: #cccccc;
-            }
-        }
-
-        /* iOS Safari specific fixes */
-        @supports (-webkit-touch-callout: none) {
-            .input-field {
-                font-size: 16px; /* Prevent zoom */
-            }
-            
-            .input-area {
-                padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
-            }
+        .send-button:disabled {
+            opacity: 0.5;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="app">
+        <!-- Settings Overlay -->
+        <div class="settings-overlay" id="settings-overlay"></div>
+
+        <!-- Settings Panel -->
+        <div class="settings-panel" id="settings-panel">
+            <div class="settings-header">
+                <div class="settings-title">⚙️ Settings</div>
+                <button class="close-settings" id="close-settings">×</button>
+            </div>
+            <div class="settings-content">
+                <div class="setting-group">
+                    <label class="setting-label">Max Tokens per Request</label>
+                    <div class="setting-description">Maximum number of tokens in AI responses (50-2000)</div>
+                    <div class="slider-container">
+                        <input type="range" id="tokens-slider" class="setting-slider" min="50" max="2000" value="150" step="50">
+                        <div class="slider-labels">
+                            <span>50</span>
+                            <span class="slider-value" id="tokens-value">150</span>
+                            <span>2000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Temperature (Creativity)</label>
+                    <div class="setting-description">Higher values make responses more creative (0.1-2.0)</div>
+                    <div class="slider-container">
+                        <input type="range" id="temperature-slider" class="setting-slider" min="1" max="20" value="7" step="1">
+                        <div class="slider-labels">
+                            <span>0.1</span>
+                            <span class="slider-value" id="temperature-value">0.7</span>
+                            <span>2.0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="save-settings" id="save-settings">💾 Save Settings</button>
+            </div>
+        </div>
+
         <!-- Header -->
         <header class="header">
-            <div class="logo">
-                <div class="logo-icon">🧠</div>
-                <div class="logo-text">AI Playground v1</div>
-            </div>
-            <div class="header-stats">
-                <div class="requests-remaining" id="remaining-requests">999 requests left</div>
-                <div class="usage-info">
-                    <span>Daily: <span id="daily-used">1</span></span>
-                    <span>Rate: <span id="rate-limit">100</span>/hr</span>
-                    <span>Tokens: <span id="tokens-display">150</span></span>
+            <div class="header-row">
+                <div class="logo-section">
+                    <div class="logo-icon">🧠</div>
+                    <div class="logo-text">AI Playground v2</div>
                 </div>
+                <div class="header-controls">
+                    <div class="requests-count" id="requests-remaining">996 left</div>
+                    <button class="settings-btn" id="settings-btn">⚙️</button>
+                </div>
+            </div>
+            <div class="stats-row">
+                Daily: <span id="daily-used">4</span> • 
+                Rate: <span id="rate-limit">100</span>/hr • 
+                Tokens: <span id="tokens-display">150</span>
             </div>
         </header>
 
-        <!-- Mobile Model Selector Bar -->
-        <div class="model-selector-bar">
-            <label class="model-label" for="mobile-model-select">Model:</label>
-            <select id="mobile-model-select" class="model-select">
-                <option value="">Loading models...</option>
-            </select>
+        <!-- Model Selection -->
+        <div class="model-bar">
+            <div class="model-container">
+                <span class="model-label">Model:</span>
+                <select id="model-select" class="model-select">
+                    <option value="">Loading models...</option>
+                </select>
+            </div>
         </div>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Desktop Settings Panel (Hidden on Mobile) -->
-            <aside class="desktop-settings">
-                <h2>⚙️ Settings</h2>
-                
-                <div class="desktop-form-group">
-                    <label for="desktop-model-select">AI Model</label>
-                    <select id="desktop-model-select">
-                        <option value="">Loading models...</option>
-                    </select>
+        <!-- Chat Container -->
+        <div class="chat-container">
+            <!-- Messages -->
+            <div class="messages" id="messages">
+                <div class="welcome">
+                    <h1>Welcome to AI Playground! 🧠✨</h1>
+                    <p>Select a model and start chatting with AI<br><strong>Built with ❤️ for Devanshi and friends!</strong></p>
                 </div>
+            </div>
 
-                <div class="desktop-stats">
-                    <div class="desktop-stat-item">
-                        <span>Daily Used:</span>
-                        <span class="desktop-stat-value" id="desktop-daily-used">1</span>
-                    </div>
-                    <div class="desktop-stat-item">
-                        <span>Rate Limit:</span>
-                        <span class="desktop-stat-value" id="desktop-rate-limit">100/hr</span>
-                    </div>
-                    <div class="desktop-stat-item">
-                        <span>Max Tokens:</span>
-                        <span class="desktop-stat-value" id="desktop-tokens">150</span>
-                    </div>
-                </div>
-            </aside>
+            <!-- Error Banner -->
+            <div id="error-banner" class="error-banner">
+                ⚠️ <span id="error-text"></span>
+            </div>
+        </div>
 
-            <!-- Chat Area -->
-            <section class="chat-area">
-                <!-- Messages -->
-                <div class="messages-container" id="messages">
-                    <div class="welcome-screen">
-                        <h3 class="welcome-title">Welcome to AI Playground! 🧠✨</h3>
-                        <p class="welcome-subtitle">Select a model and start chatting with AI<br>Built with ❤️ for Devanshi and friends!</p>
-                    </div>
-                </div>
-
-                <!-- Error Banner -->
-                <div id="error-banner" class="error-banner">
-                    ⚠️ <span id="error-text"></span>
-                </div>
-
-                <!-- Input Area -->
-                <div class="input-area">
-                    <div class="input-container">
-                        <textarea 
-                            id="message-input" 
-                            class="input-field" 
-                            placeholder="Type your message..."
-                            rows="1"
-                        ></textarea>
-                        <button id="send-btn" class="send-btn" type="button">
-                            ➤
-                        </button>
-                    </div>
-                </div>
-            </section>
-        </main>
+        <!-- Input Area -->
+        <div class="input-area">
+            <div class="input-container">
+                <textarea 
+                    id="message-input" 
+                    class="message-input" 
+                    placeholder="Type your message..."
+                    rows="1"
+                ></textarea>
+                <button id="send-button" class="send-button" type="button">➤</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -667,43 +646,50 @@
                 this.messages = [];
                 this.isLoading = false;
                 this.selectedModel = '';
-                this.maxTokens = 150; // Fixed token limit
+                this.settings = {
+                    maxTokens: 150,
+                    temperature: 0.7
+                };
                 
                 this.initElements();
                 this.initEventListeners();
+                this.loadSettings();
                 this.fetchModels();
                 this.fetchStats();
-                this.setupTextareaResize();
+                this.setupInputResize();
             }
 
             initElements() {
-                // Mobile elements
-                this.mobileModelSelect = document.getElementById('mobile-model-select');
-                
-                // Desktop elements
-                this.desktopModelSelect = document.getElementById('desktop-model-select');
-                
-                // Shared elements
-                this.messagesArea = document.getElementById('messages');
+                this.modelSelect = document.getElementById('model-select');
+                this.messagesEl = document.getElementById('messages');
                 this.messageInput = document.getElementById('message-input');
-                this.sendBtn = document.getElementById('send-btn');
+                this.sendButton = document.getElementById('send-button');
                 this.errorBanner = document.getElementById('error-banner');
                 this.errorText = document.getElementById('error-text');
-                
-                // Stats elements
-                this.remainingRequests = document.getElementById('remaining-requests');
+                this.requestsRemaining = document.getElementById('requests-remaining');
                 this.dailyUsed = document.getElementById('daily-used');
                 this.rateLimit = document.getElementById('rate-limit');
                 this.tokensDisplay = document.getElementById('tokens-display');
                 
-                // Desktop stats
-                this.desktopDailyUsed = document.getElementById('desktop-daily-used');
-                this.desktopRateLimit = document.getElementById('desktop-rate-limit');
-                this.desktopTokens = document.getElementById('desktop-tokens');
+                // Settings elements
+                this.settingsBtn = document.getElementById('settings-btn');
+                this.settingsPanel = document.getElementById('settings-panel');
+                this.settingsOverlay = document.getElementById('settings-overlay');
+                this.closeSettings = document.getElementById('close-settings');
+                this.saveSettings = document.getElementById('save-settings');
+                this.tokensSlider = document.getElementById('tokens-slider');
+                this.tokensValue = document.getElementById('tokens-value');
+                this.temperatureSlider = document.getElementById('temperature-slider');
+                this.temperatureValue = document.getElementById('temperature-value');
             }
 
             initEventListeners() {
-                this.sendBtn.addEventListener('click', () => this.sendMessage());
+                // Main functionality
+                this.sendButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.sendMessage();
+                });
+                
                 this.messageInput.addEventListener('keypress', (e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
@@ -711,23 +697,93 @@
                     }
                 });
                 
-                // Sync model selectors
-                this.mobileModelSelect.addEventListener('change', (e) => {
+                this.modelSelect.addEventListener('change', (e) => {
                     this.selectedModel = e.target.value;
-                    this.desktopModelSelect.value = e.target.value;
                 });
-                
-                this.desktopModelSelect.addEventListener('change', (e) => {
-                    this.selectedModel = e.target.value;
-                    this.mobileModelSelect.value = e.target.value;
+
+                // Settings functionality
+                this.settingsBtn.addEventListener('click', () => {
+                    this.openSettings();
+                });
+
+                this.closeSettings.addEventListener('click', () => {
+                    this.closeSettingsPanel();
+                });
+
+                this.settingsOverlay.addEventListener('click', () => {
+                    this.closeSettingsPanel();
+                });
+
+                this.saveSettings.addEventListener('click', () => {
+                    this.saveSettingsData();
+                });
+
+                // Settings sliders
+                this.tokensSlider.addEventListener('input', (e) => {
+                    this.tokensValue.textContent = e.target.value;
+                });
+
+                this.temperatureSlider.addEventListener('input', (e) => {
+                    const value = (e.target.value / 10).toFixed(1);
+                    this.temperatureValue.textContent = value;
                 });
             }
 
-            setupTextareaResize() {
+            setupInputResize() {
                 this.messageInput.addEventListener('input', () => {
                     this.messageInput.style.height = 'auto';
-                    this.messageInput.style.height = Math.min(this.messageInput.scrollHeight, 120) + 'px';
+                    this.messageInput.style.height = Math.min(this.messageInput.scrollHeight, 80) + 'px';
                 });
+            }
+
+            openSettings() {
+                this.settingsPanel.classList.add('open');
+                this.settingsOverlay.classList.add('open');
+            }
+
+            closeSettingsPanel() {
+                this.settingsPanel.classList.remove('open');
+                this.settingsOverlay.classList.remove('open');
+            }
+
+            loadSettings() {
+                // Load settings from localStorage or use defaults
+                const saved = localStorage.getItem('ai-playground-settings');
+                if (saved) {
+                    try {
+                        this.settings = { ...this.settings, ...JSON.parse(saved) };
+                    } catch (e) {
+                        console.error('Failed to load settings:', e);
+                    }
+                }
+                
+                // Update UI with loaded settings
+                this.tokensSlider.value = this.settings.maxTokens;
+                this.tokensValue.textContent = this.settings.maxTokens;
+                this.temperatureSlider.value = Math.round(this.settings.temperature * 10);
+                this.temperatureValue.textContent = this.settings.temperature;
+                
+                // Update display
+                this.tokensDisplay.textContent = this.settings.maxTokens;
+            }
+
+            saveSettingsData() {
+                // Get values from sliders
+                this.settings.maxTokens = parseInt(this.tokensSlider.value);
+                this.settings.temperature = parseFloat(this.temperatureSlider.value) / 10;
+                
+                // Save to localStorage
+                localStorage.setItem('ai-playground-settings', JSON.stringify(this.settings));
+                
+                // Update display
+                this.tokensDisplay.textContent = this.settings.maxTokens;
+                
+                // Close settings panel
+                this.closeSettingsPanel();
+                
+                // Show confirmation
+                this.showError('Settings saved successfully!');
+                setTimeout(() => this.hideError(), 2000);
             }
 
             async fetchModels() {
@@ -736,33 +792,22 @@
                     const data = await response.json();
                     
                     if (data.models) {
-                        // Clear both selectors
-                        this.mobileModelSelect.innerHTML = '';
-                        this.desktopModelSelect.innerHTML = '';
-                        
+                        this.modelSelect.innerHTML = '';
                         data.models.forEach(model => {
-                            // Mobile selector
-                            const mobileOption = document.createElement('option');
-                            mobileOption.value = model;
-                            mobileOption.textContent = model;
-                            this.mobileModelSelect.appendChild(mobileOption);
-                            
-                            // Desktop selector
-                            const desktopOption = document.createElement('option');
-                            desktopOption.value = model;
-                            desktopOption.textContent = model;
-                            this.desktopModelSelect.appendChild(desktopOption);
+                            const option = document.createElement('option');
+                            option.value = model;
+                            option.textContent = model;
+                            this.modelSelect.appendChild(option);
                         });
                         
                         if (data.models.length > 0) {
                             this.selectedModel = data.models[0];
-                            this.mobileModelSelect.value = this.selectedModel;
-                            this.desktopModelSelect.value = this.selectedModel;
+                            this.modelSelect.value = this.selectedModel;
                         }
                     }
                 } catch (error) {
                     console.error('Failed to fetch models:', error);
-                    this.showError('Failed to load available models');
+                    this.showError('Failed to load models');
                 }
             }
 
@@ -771,21 +816,14 @@
                     const response = await fetch(`${this.API_BASE}/stats`);
                     const data = await response.json();
                     
-                    const remaining = data.daily_requests_remaining || 999;
-                    const used = data.daily_requests_used || 1;
-                    const rateLimit = data.rate_limit_per_ip_per_hour || 100;
+                    const remaining = data.daily_requests_remaining || 996;
+                    const used = data.daily_requests_used || 4;
+                    const rate = data.rate_limit_per_ip_per_hour || 100;
                     
-                    // Update all stat displays
-                    this.remainingRequests.textContent = `${remaining} requests left`;
+                    this.requestsRemaining.textContent = `${remaining} left`;
                     this.dailyUsed.textContent = used;
-                    this.rateLimit.textContent = rateLimit;
-                    this.tokensDisplay.textContent = this.maxTokens;
-                    
-                    // Update desktop stats
-                    if (this.desktopDailyUsed) this.desktopDailyUsed.textContent = used;
-                    if (this.desktopRateLimit) this.desktopRateLimit.textContent = `${rateLimit}/hr`;
-                    if (this.desktopTokens) this.desktopTokens.textContent = this.maxTokens;
-                    
+                    this.rateLimit.textContent = rate;
+                    this.tokensDisplay.textContent = this.settings.maxTokens;
                 } catch (error) {
                     console.error('Failed to fetch stats:', error);
                 }
@@ -795,116 +833,96 @@
                 const message = this.messageInput.value.trim();
                 if (!message || !this.selectedModel || this.isLoading) return;
 
-                // Add user message
-                this.addMessage({
-                    type: 'user',
-                    content: message,
-                    timestamp: new Date()
-                });
-
+                this.addMessage('user', message);
                 this.messageInput.value = '';
                 this.messageInput.style.height = 'auto';
                 this.setLoading(true);
                 this.hideError();
-
-                // Show loading indicator
                 this.showLoading();
 
                 try {
                     const response = await fetch(`${this.API_BASE}/ask-ai`, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             model: this.selectedModel,
                             prompt: message,
-                            max_tokens: this.maxTokens
+                            max_tokens: this.settings.maxTokens,
+                            temperature: this.settings.temperature
                         })
                     });
 
                     const data = await response.json();
-
-                    // Remove loading indicator
                     this.hideLoading();
 
                     if (data.error) {
                         this.showError(data.error);
-                        this.addMessage({
-                            type: 'error',
-                            content: data.error,
-                            timestamp: new Date()
-                        });
+                        this.addMessage('error', data.error);
                     } else {
-                        this.addMessage({
-                            type: 'ai',
-                            content: data.response,
-                            model: data.model_used,
-                            timestamp: new Date()
-                        });
+                        this.addMessage('ai', data.response, data.model_used);
                     }
 
                     this.fetchStats();
                 } catch (error) {
                     this.hideLoading();
                     this.showError('Failed to send message');
-                    this.addMessage({
-                        type: 'error',
-                        content: 'Failed to send message. Please try again.',
-                        timestamp: new Date()
-                    });
+                    this.addMessage('error', 'Failed to send message. Please try again.');
                 } finally {
                     this.setLoading(false);
                 }
             }
 
-            addMessage(message) {
-                this.messages.push(message);
-                
-                // Remove welcome message if it exists
-                const welcome = this.messagesArea.querySelector('.welcome-screen');
-                if (welcome) {
-                    welcome.remove();
-                }
+            addMessage(type, content, model = null) {
+                const welcome = this.messagesEl.querySelector('.welcome');
+                if (welcome) welcome.remove();
 
                 const messageEl = document.createElement('div');
-                messageEl.className = `message ${message.type}`;
-                
-                const bubble = document.createElement('div');
-                bubble.className = 'message-bubble';
-                
-                let content = '';
-                
-                if (message.type === 'ai') {
-                    content += `<div class="message-header">
-                        <span>🧠 ${message.model}</span>
-                        <span>${this.formatTime(message.timestamp)}</span>
-                    </div>`;
+                messageEl.className = `message ${type}`;
+
+                const contentEl = document.createElement('div');
+                contentEl.className = 'message-content';
+
+                if (type === 'ai' && model) {
+                    const infoEl = document.createElement('div');
+                    infoEl.className = 'message-info';
+                    infoEl.innerHTML = `
+                        <span>🧠 ${model}</span>
+                        <span>${new Date().toLocaleTimeString()}</span>
+                    `;
+                    contentEl.appendChild(infoEl);
                 }
-                
-                content += `<div>${this.escapeHtml(message.content)}</div>`;
-                
-                content += `<div class="message-footer">
-                    <span>${this.formatTime(message.timestamp)}</span>`;
-                
-                if (message.type !== 'user') {
-                    content += `<button class="copy-btn" onclick="navigator.clipboard.writeText('${this.escapeHtml(message.content)}')">📋 Copy</button>`;
+
+                const textEl = document.createElement('div');
+                textEl.textContent = content;
+                contentEl.appendChild(textEl);
+
+                if (type === 'ai') {
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'copy-btn';
+                    copyBtn.textContent = '📋 Copy';
+                    copyBtn.onclick = () => {
+                        navigator.clipboard.writeText(content).then(() => {
+                            copyBtn.textContent = '✅ Copied!';
+                            setTimeout(() => {
+                                copyBtn.textContent = '📋 Copy';
+                            }, 1000);
+                        });
+                    };
+                    contentEl.appendChild(copyBtn);
                 }
+
+                messageEl.appendChild(contentEl);
+                this.messagesEl.appendChild(messageEl);
                 
-                content += '</div>';
-                
-                bubble.innerHTML = content;
-                messageEl.appendChild(bubble);
-                this.messagesArea.appendChild(messageEl);
-                
-                // Scroll to bottom
-                this.messagesArea.scrollTop = this.messagesArea.scrollHeight;
+                setTimeout(() => {
+                    this.messagesEl.scrollTop = this.messagesEl.scrollHeight;
+                }, 50);
             }
 
             showLoading() {
                 const loadingEl = document.createElement('div');
                 loadingEl.className = 'loading';
-                loadingEl.id = 'loading-indicator';
+                loadingEl.id = 'loading';
                 loadingEl.innerHTML = `
                     <div class="loading-dots">
                         <div class="loading-dot"></div>
@@ -913,51 +931,33 @@
                     </div>
                     <span>AI is thinking...</span>
                 `;
-                this.messagesArea.appendChild(loadingEl);
-                this.messagesArea.scrollTop = this.messagesArea.scrollHeight;
+                this.messagesEl.appendChild(loadingEl);
+                setTimeout(() => {
+                    this.messagesEl.scrollTop = this.messagesEl.scrollHeight;
+                }, 50);
             }
 
             hideLoading() {
-                const loading = document.getElementById('loading-indicator');
-                if (loading) {
-                    loading.remove();
-                }
+                const loading = document.getElementById('loading');
+                if (loading) loading.remove();
             }
 
             setLoading(loading) {
                 this.isLoading = loading;
-                this.sendBtn.disabled = loading;
+                this.sendButton.disabled = loading;
                 this.messageInput.disabled = loading;
             }
 
             showError(message) {
                 this.errorText.textContent = message;
-                this.errorBanner.style.display = 'flex';
-                
-                setTimeout(() => {
-                    this.hideError();
-                }, 5000);
+                this.errorBanner.style.display = 'block';
+                setTimeout(() => this.hideError(), 5000);
             }
 
             hideError() {
                 this.errorBanner.style.display = 'none';
             }
-
-            formatTime(date) {
-                return date.toLocaleTimeString();
-            }
-
-            escapeHtml(text) {
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            }
         }
 
         // Initialize the app when the page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            new AIPlayground();
-        });
-    </script>
-</body>
-</html>
+        document.addEventListener('DOMContent
