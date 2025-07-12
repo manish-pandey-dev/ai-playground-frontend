@@ -260,6 +260,86 @@
             background: #2563eb;
         }
 
+        /* Health Check Styles */
+        .health-check-btn {
+            width: 100%;
+            padding: 12px;
+            background: #059669;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .health-check-btn:active {
+            background: #047857;
+        }
+
+        .health-check-btn:disabled {
+            background: #6b7280;
+            cursor: not-allowed;
+        }
+
+        .health-results {
+            margin-top: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .health-summary {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .health-details {
+            background: var(--primary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .health-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 12px;
+        }
+
+        .health-item:last-child {
+            border-bottom: none;
+        }
+
+        .health-model {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .health-status {
+            font-weight: 600;
+        }
+
+        .health-time {
+            color: var(--text-secondary);
+            font-size: 10px;
+        }
+
+        .health-error {
+            color: var(--error-color);
+            font-size: 10px;
+            margin-top: 4px;
+            word-wrap: break-word;
+        }
+
         /* Settings Overlay */
         .settings-overlay {
             position: fixed;
@@ -587,6 +667,19 @@
                 </div>
 
                 <button class="save-settings" id="save-settings">💾 Save Settings</button>
+                
+                <!-- Hidden Health Check Section -->
+                <div class="setting-group" style="border-top: 1px solid var(--border-color); padding-top: 16px; margin-top: 16px;">
+                    <label class="setting-label">🔍 API Health Check</label>
+                    <div class="setting-description">Test all configured AI models and check their status</div>
+                    <button class="health-check-btn" id="health-check-btn">🚀 Run Health Check</button>
+                    
+                    <!-- Health Check Results -->
+                    <div id="health-results" class="health-results" style="display: none;">
+                        <div class="health-summary" id="health-summary"></div>
+                        <div class="health-details" id="health-details"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -595,7 +688,7 @@
             <div class="header-row">
                 <div class="logo-section">
                     <div class="logo-icon">🧠</div>
-                    <div class="logo-text">AI Playground v6</div>
+                    <div class="logo-text">AI Playground v12</div>
                 </div>
                 <div class="header-controls">
                     <div class="requests-count" id="requests-remaining">996 left</div>
@@ -698,6 +791,12 @@
                 this.tokensValue = document.getElementById('tokens-value');
                 this.temperatureSlider = document.getElementById('temperature-slider');
                 this.temperatureValue = document.getElementById('temperature-value');
+                
+                // Health check elements
+                this.healthCheckBtn = document.getElementById('health-check-btn');
+                this.healthResults = document.getElementById('health-results');
+                this.healthSummary = document.getElementById('health-summary');
+                this.healthDetails = document.getElementById('health-details');
             }
 
             initEventListeners() {
@@ -743,6 +842,11 @@
                 this.temperatureSlider.addEventListener('input', (e) => {
                     const value = (e.target.value / 10).toFixed(1);
                     this.temperatureValue.textContent = value;
+                });
+
+                // Health check functionality
+                this.healthCheckBtn.addEventListener('click', () => {
+                    this.runHealthCheck();
                 });
             }
 
@@ -985,6 +1089,69 @@
 
             hideSuccess() {
                 this.successBanner.style.display = 'none';
+            }
+
+            async runHealthCheck() {
+                this.healthCheckBtn.disabled = true;
+                this.healthCheckBtn.textContent = '🔄 Running Health Check...';
+                this.healthResults.style.display = 'none';
+
+                try {
+                    const response = await fetch(`${this.API_BASE}/health-check`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.displayHealthResults(data);
+                        this.showSuccess(`Health check completed: ${data.summary.success_rate}% models operational`);
+                    } else {
+                        this.showError(`Health check failed: ${data.error}`);
+                    }
+                } catch (error) {
+                    console.error('Health check failed:', error);
+                    this.showError('Failed to run health check');
+                } finally {
+                    this.healthCheckBtn.disabled = false;
+                    this.healthCheckBtn.textContent = '🚀 Run Health Check';
+                }
+            }
+
+            displayHealthResults(data) {
+                const { results, summary } = data;
+                
+                // Update summary
+                this.healthSummary.innerHTML = `
+                    <strong>📊 Health Check Summary</strong><br>
+                    ✅ Working: ${summary.successful} | ❌ Failed: ${summary.failed} | 📈 Success Rate: ${summary.success_rate}%<br>
+                    🕒 Completed: ${new Date(summary.test_completed_at).toLocaleString()}
+                `;
+
+                // Update details
+                this.healthDetails.innerHTML = '';
+                results.forEach(result => {
+                    const item = document.createElement('div');
+                    item.className = 'health-item';
+                    
+                    let statusColor = '';
+                    if (result.status.includes('SUCCESS')) statusColor = 'color: var(--success-color)';
+                    else if (result.status.includes('RATE_LIMITED')) statusColor = 'color: orange';
+                    else if (result.status.includes('NO_CREDITS')) statusColor = 'color: #f59e0b';
+                    else if (result.status.includes('AUTH_ERROR')) statusColor = 'color: #ef4444';
+                    else statusColor = 'color: var(--error-color)';
+
+                    item.innerHTML = `
+                        <div>
+                            <div class="health-model">${result.model}</div>
+                            <div class="health-time">${result.response_time_ms}ms</div>
+                            ${result.error ? `<div class="health-error">${result.error}</div>` : ''}
+                            ${result.response_preview ? `<div style="color: var(--text-secondary); font-size: 10px; margin-top: 2px;">"${result.response_preview}"</div>` : ''}
+                        </div>
+                        <div class="health-status" style="${statusColor}">${result.status}</div>
+                    `;
+                    
+                    this.healthDetails.appendChild(item);
+                });
+
+                this.healthResults.style.display = 'block';
             }
         }
 
