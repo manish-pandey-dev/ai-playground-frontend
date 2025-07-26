@@ -45,7 +45,6 @@ export class Modal {
             document.body.appendChild(this.overlay);
             document.body.appendChild(this.modal);
 
-            // Force reflow before adding classes
             this.overlay.offsetHeight;
             this.modal.offsetHeight;
 

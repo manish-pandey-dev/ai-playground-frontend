@@ -36,12 +36,10 @@ export class NotificationBanner {
 
         this.container.appendChild(banner);
 
-        // Trigger animation
         setTimeout(() => {
             banner.style.transform = 'translateX(0)';
         }, 10);
 
-        // Auto hide
         if (duration > 0) {
             setTimeout(() => {
                 this.hide(banner);

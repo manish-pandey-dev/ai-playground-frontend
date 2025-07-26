@@ -1,6 +1,6 @@
-/ ===== src/components/layout/Header.js =====
-import { settingsStore } from '@stores/settingsStore.js';
-import { appStore } from '@stores/appStore.js';
+// ===== src/components/layout/Header.js =====
+import { settingsStore } from '../../stores/settingsStore.js';
+import { appStore } from '../../stores/appStore.js';
 
 export class Header {
     constructor() {
@@ -14,7 +14,6 @@ export class Header {
     }
 
     init() {
-        // Subscribe to stores
         appStore.subscribe(state => {
             if (state.stats) {
                 this.updateStats(state.stats);

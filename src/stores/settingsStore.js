@@ -1,7 +1,6 @@
-
 // ===== src/stores/settingsStore.js =====
-import { storageService } from '@services/storageService.js';
-import { STORAGE_KEYS, APP_CONFIG } from '@utils/constants.js';
+import { storageService } from '../services/storageService.js';
+import { STORAGE_KEYS, APP_CONFIG } from '../utils/constants.js';
 
 class SettingsStore {
     constructor() {

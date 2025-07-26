@@ -1,6 +1,6 @@
 // ===== src/components/chat/MessageBubble.js =====
-import { formatTime, copyToClipboard } from '@utils/helpers.js';
-import { MESSAGE_TYPES } from '@utils/constants.js';
+import { formatTime, copyToClipboard } from '../../utils/helpers.js';
+import { MESSAGE_TYPES } from '../../utils/constants.js';
 
 export class MessageBubble {
     constructor(message) {
@@ -16,7 +16,6 @@ export class MessageBubble {
         const contentEl = document.createElement('div');
         contentEl.className = 'message__content';
 
-        // Add model info for AI messages
         if (this.message.type === MESSAGE_TYPES.AI && this.message.model) {
             const infoEl = document.createElement('div');
             infoEl.className = 'message__info';
@@ -27,13 +26,11 @@ export class MessageBubble {
             contentEl.appendChild(infoEl);
         }
 
-        // Add message text
         const textEl = document.createElement('div');
         textEl.className = 'message__text';
         textEl.textContent = this.message.content;
         contentEl.appendChild(textEl);
 
-        // Add copy button for AI messages
         if (this.message.type === MESSAGE_TYPES.AI) {
             const copyBtn = this.createCopyButton();
             contentEl.appendChild(copyBtn);

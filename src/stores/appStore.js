@@ -1,5 +1,6 @@
 // ===== src/stores/appStore.js =====
-import { NOTIFICATION_TYPES } from '@utils/constants.js';
+import { NOTIFICATION_TYPES } from '../utils/constants.js';
+import { generateId } from '../utils/helpers.js';
 
 class AppStore {
     constructor() {
@@ -61,7 +62,6 @@ class AppStore {
         this.notify();
     }
 
-    // Convenience methods for different notification types
     showSuccess(message, duration) {
         return this.addNotification(NOTIFICATION_TYPES.SUCCESS, message, duration);
     }

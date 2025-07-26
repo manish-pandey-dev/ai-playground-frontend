@@ -1,6 +1,6 @@
 // ===== src/stores/chatStore.js =====
-import { generateId } from '@utils/helpers.js';
-import { MESSAGE_TYPES } from '@utils/constants.js';
+import { generateId } from '../utils/helpers.js';
+import { MESSAGE_TYPES } from '../utils/constants.js';
 
 class ChatStore {
     constructor() {

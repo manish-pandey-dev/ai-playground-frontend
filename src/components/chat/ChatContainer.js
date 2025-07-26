@@ -1,7 +1,7 @@
 // ===== src/components/chat/ChatContainer.js =====
 import { MessageBubble } from './MessageBubble.js';
 import { TypingIndicator } from './TypingIndicator.js';
-import { chatStore } from '@stores/chatStore.js';
+import { chatStore } from '../../stores/chatStore.js';
 
 export class ChatContainer {
     constructor(container) {
@@ -14,7 +14,6 @@ export class ChatContainer {
     init() {
         this.container.innerHTML = this.getWelcomeHTML();
 
-        // Subscribe to chat store updates
         this.unsubscribe = chatStore.subscribe(state => {
             this.updateMessages(state.messages);
             this.updateLoadingState(state.isLoading);
@@ -34,17 +33,14 @@ export class ChatContainer {
     }
 
     updateMessages(messages) {
-        // Remove welcome message if there are messages
         if (messages.length > 0) {
             const welcome = this.container.querySelector('.welcome');
             if (welcome) welcome.remove();
         }
 
-        // Clear existing messages
         const existingMessages = this.container.querySelectorAll('.message');
         existingMessages.forEach(msg => msg.remove());
 
-        // Add all messages
         messages.forEach(message => {
             const messageBubble = new MessageBubble(message);
             this.container.appendChild(messageBubble.render());

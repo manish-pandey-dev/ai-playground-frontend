@@ -1,5 +1,5 @@
 // ===== src/components/chat/MessageInput.js =====
-import { debounce } from '@utils/helpers.js';
+import { debounce } from '../../utils/helpers.js';
 
 export class MessageInput {
     constructor(options = {}) {
@@ -31,12 +31,10 @@ export class MessageInput {
     }
 
     attachEventListeners() {
-        // Auto-resize textarea
         this.textarea.addEventListener('input', () => {
             this.autoResize();
         });
 
-        // Send on Enter (but not Shift+Enter)
         this.textarea.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -44,7 +42,6 @@ export class MessageInput {
             }
         });
 
-        // Send button click
         this.sendButton.addEventListener('click', () => {
             this.sendMessage();
         });

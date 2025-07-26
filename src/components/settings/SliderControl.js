@@ -1,4 +1,4 @@
-// ===== src/components/settings/SliderControl.js =====
+// ===== src/components/settings/SliderControl.js =====comment
 export class SliderControl {
     constructor(options = {}) {
         this.id = options.id || 'slider';

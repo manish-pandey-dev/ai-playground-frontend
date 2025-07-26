@@ -1,11 +1,11 @@
 // ===== src/components/settings/SettingsPanel.js =====
-import { Modal } from '@components/common/Modal.js';
+import { Modal } from '../common/Modal.js';
 import { SliderControl } from './SliderControl.js';
-import { Button } from '@components/common/Button.js';
-import { settingsStore } from '@stores/settingsStore.js';
-import { appStore } from '@stores/appStore.js';
-import { apiService } from '@services/api.js';
-import { APP_CONFIG } from '@utils/constants.js';
+import { Button } from '../common/Button.js';
+import { settingsStore } from '../../stores/settingsStore.js';
+import { appStore } from '../../stores/appStore.js';
+import { apiService } from '../../services/api.js';
+import { APP_CONFIG } from '../../utils/constants.js';
 
 export class SettingsPanel extends Modal {
     constructor() {
@@ -23,7 +23,6 @@ export class SettingsPanel extends Modal {
     createContent() {
         const container = document.createElement('div');
 
-        // Create sliders
         this.sliders.tokens = new SliderControl({
             id: 'tokens',
             label: 'Max Tokens per Request',
@@ -47,26 +46,22 @@ export class SettingsPanel extends Modal {
             onChange: (value) => this.onSliderChange('temperature', value / 10)
         });
 
-        // Create save button
         this.saveButton = new Button({
             text: '💾 Save Settings',
             variant: 'primary',
             onClick: () => this.saveSettings()
         });
 
-        // Create health check button
         this.healthButton = new Button({
             text: '🚀 Run Health Check',
             variant: 'success',
             onClick: () => this.runHealthCheck()
         });
 
-        // Assemble content
         container.appendChild(this.sliders.tokens.render());
         container.appendChild(this.sliders.temperature.render());
         container.appendChild(this.saveButton.render());
 
-        // Health check section
         const healthSection = document.createElement('div');
         healthSection.style.cssText = 'border-top: 1px solid var(--border-color); padding-top: 16px; margin-top: 16px;';
 
@@ -93,7 +88,6 @@ export class SettingsPanel extends Modal {
     }
 
     init() {
-        // Subscribe to settings changes
         settingsStore.subscribe(settings => {
             this.sliders.tokens.setValue(settings.maxTokens);
             this.sliders.temperature.setValue(Math.round(settings.temperature * 10));
@@ -101,7 +95,6 @@ export class SettingsPanel extends Modal {
     }
 
     onSliderChange(key, value) {
-        // Update setting immediately for live preview
         settingsStore.updateSetting(key, value);
     }
 
@@ -175,7 +168,6 @@ export class SettingsPanel extends Modal {
     }
 
     onClose() {
-        // Reset any unsaved changes
         const currentSettings = settingsStore.getSettings();
         this.sliders.tokens.setValue(currentSettings.maxTokens);
         this.sliders.temperature.setValue(Math.round(currentSettings.temperature * 10));
