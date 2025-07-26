@@ -160,18 +160,28 @@ export class HamburgerMenu {
         console.log('Navigating to Jigyasa...');
         this.close();
 
-        // We'll implement this navigation in the next step
-        // For now, let's just show an alert
-        alert('Jigyasa app coming soon! We will implement this in the next step.');
-
-        // TODO: Replace with actual navigation
-        // window.location.href = '/jigyasa';
+        // Import router and navigate
+        import('../../services/router.js').then(({ router }) => {
+            router.navigate('/jigyasa');
+        }).catch(error => {
+            console.error('Failed to navigate to Jigyasa:', error);
+            // Fallback: direct URL change
+            window.location.href = '/jigyasa';
+        });
     }
 
     navigateToPlayground() {
-        console.log('Already in AI Playground');
+        console.log('Navigating to AI Playground...');
         this.close();
-        // We're already in the playground, so just close the menu
+
+        // Import router and navigate
+        import('../../services/router.js').then(({ router }) => {
+            router.navigate('/');
+        }).catch(error => {
+            console.error('Failed to navigate to Playground:', error);
+            // Fallback: direct URL change
+            window.location.href = '/';
+        });
     }
 
     // Method to update active app (useful when navigating)
