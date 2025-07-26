@@ -1,7 +1,7 @@
-// vite.config.js - Replace your existing vite.config.js with this
 import { defineConfig } from 'vite'
 import legacy from '@vitejs/plugin-legacy'
 import { resolve } from 'path'
+import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
   build: {
@@ -11,8 +11,7 @@ export default defineConfig({
     minify: 'terser',
     rollupOptions: {
       input: {
-        main: resolve(process.cwd(), 'index.html'),
-        auth: resolve(process.cwd(), 'auth.html')
+        main: resolve(__dirname, 'index.html')
       }
     }
   },
@@ -20,14 +19,7 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 3000,
-    open: true,
-    proxy: {
-      '/api': {
-        target: 'https://ai-playground-421016501960.europe-west4.run.app',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      }
-    }
+    open: true
   },
 
   preview: {
@@ -37,13 +29,13 @@ export default defineConfig({
 
   resolve: {
     alias: {
-      '@': resolve(process.cwd(), 'src'),
-      '@components': resolve(process.cwd(), 'src/components'),
-      '@services': resolve(process.cwd(), 'src/services'),
-      '@stores': resolve(process.cwd(), 'src/stores'),
-      '@utils': resolve(process.cwd(), 'src/utils'),
-      '@styles': resolve(process.cwd(), 'src/styles'),
-      '@assets': resolve(process.cwd(), 'src/assets')
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@components': fileURLToPath(new URL('./src/components', import.meta.url)),
+      '@services': fileURLToPath(new URL('./src/services', import.meta.url)),
+      '@stores': fileURLToPath(new URL('./src/stores', import.meta.url)),
+      '@utils': fileURLToPath(new URL('./src/utils', import.meta.url)),
+      '@styles': fileURLToPath(new URL('./src/styles', import.meta.url)),
+      '@assets': fileURLToPath(new URL('./src/assets', import.meta.url))
     }
   },
 
@@ -54,7 +46,7 @@ export default defineConfig({
   ],
 
   define: {
-    __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
+    __APP_VERSION__: JSON.stringify(process.env.npm_package_version || '3.0.0'),
     __BUILD_DATE__: JSON.stringify(new Date().toISOString())
   },
 
