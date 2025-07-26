@@ -1,10 +1,9 @@
-// vite.config.js - Modern build configuration for AI Playground
-
+// vite.config.js - Replace your existing vite.config.js with this
 import { defineConfig } from 'vite'
 import legacy from '@vitejs/plugin-legacy'
+import { resolve } from 'path'
 
 export default defineConfig({
-  // Build configuration
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
@@ -12,46 +11,54 @@ export default defineConfig({
     minify: 'terser',
     rollupOptions: {
       input: {
-        main: 'index.html',
-        auth: 'auth.html'
+        main: resolve(process.cwd(), 'index.html'),
+        auth: resolve(process.cwd(), 'auth.html')
       }
     }
   },
 
-  // Development server
   server: {
     host: '0.0.0.0',
     port: 3000,
-    open: true
+    open: true,
+    proxy: {
+      '/api': {
+        target: 'https://ai-playground-421016501960.europe-west4.run.app',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
   },
 
-  // Preview server (for testing builds)
   preview: {
     host: '0.0.0.0',
     port: 4173
   },
 
-  // Plugins for compatibility
+  resolve: {
+    alias: {
+      '@': resolve(process.cwd(), 'src'),
+      '@components': resolve(process.cwd(), 'src/components'),
+      '@services': resolve(process.cwd(), 'src/services'),
+      '@stores': resolve(process.cwd(), 'src/stores'),
+      '@utils': resolve(process.cwd(), 'src/utils'),
+      '@styles': resolve(process.cwd(), 'src/styles'),
+      '@assets': resolve(process.cwd(), 'src/assets')
+    }
+  },
+
   plugins: [
     legacy({
       targets: ['defaults', 'not IE 11']
     })
   ],
 
-  // Environment variables
   define: {
     __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
     __BUILD_DATE__: JSON.stringify(new Date().toISOString())
   },
 
-  // Asset optimization
-  assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg'],
-
-  // CSS configuration
   css: {
-    devSourcemap: true,
-    modules: {
-      localsConvention: 'camelCase'
-    }
+    devSourcemap: true
   }
 })

@@ -1,0 +1,38 @@
+/* ===== src/styles/utilities/responsive.css ===== */
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .logo-text {
+    font-size: var(--font-size-lg);
+  }
+
+  .header__row {
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .message__content {
+    max-width: 90%;
+  }
+
+  .welcome {
+    padding: var(--spacing-xl) var(--spacing-lg);
+  }
+
+  .modal__content {
+    max-height: 70vh;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .message__content {
+    max-width: 85%;
+  }
+}
+
+/* Desktop adjustments */
+@media (min-width: 1025px) {
+  .app {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
