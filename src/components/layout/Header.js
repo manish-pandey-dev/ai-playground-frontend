@@ -1,6 +1,7 @@
-// ===== src/components/layout/Header.js =====
+// ===== src/components/layout/Header.js (Updated to include theme switcher) =====
 import { settingsStore } from '../../stores/settingsStore.js';
 import { appStore } from '../../stores/appStore.js';
+import { ThemeSwitcher } from '../common/ThemeSwitcher.js';
 
 export class Header {
     constructor() {
@@ -11,6 +12,7 @@ export class Header {
         this.tokensDisplayEl = document.getElementById('tokens-display');
 
         this.init();
+        this.addThemeSwitcher();
     }
 
     init() {
@@ -25,6 +27,22 @@ export class Header {
                 this.tokensDisplayEl.textContent = settings.maxTokens;
             }
         });
+    }
+
+    addThemeSwitcher() {
+        // Add theme switcher to header controls
+        const headerControls = this.element.querySelector('.header__controls');
+        if (headerControls) {
+            this.themeSwitcher = new ThemeSwitcher();
+
+            // Insert before the settings button
+            const settingsBtn = document.getElementById('settings-btn');
+            if (settingsBtn) {
+                headerControls.insertBefore(this.themeSwitcher.render(), settingsBtn);
+            } else {
+                headerControls.appendChild(this.themeSwitcher.render());
+            }
+        }
     }
 
     updateStats(stats) {

@@ -1,4 +1,4 @@
-// ===== src/stores/settingsStore.js =====
+// ===== src/stores/settingsStore.js (Updated to include theme) =====
 import { storageService } from '../services/storageService.js';
 import { STORAGE_KEYS, APP_CONFIG } from '../utils/constants.js';
 
@@ -8,7 +8,7 @@ class SettingsStore {
             maxTokens: APP_CONFIG.maxTokens.default,
             temperature: APP_CONFIG.temperature.default,
             selectedModel: '',
-            theme: 'dark'
+            theme: 'system' // Add theme to settings
         };
         this.observers = [];
         this.loadSettings();
@@ -62,7 +62,7 @@ class SettingsStore {
             maxTokens: APP_CONFIG.maxTokens.default,
             temperature: APP_CONFIG.temperature.default,
             selectedModel: '',
-            theme: 'dark'
+            theme: 'system'
         };
         this.saveSettings();
         this.notify();

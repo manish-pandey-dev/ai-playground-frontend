@@ -1,3 +1,4 @@
+/* ===== index.html (Updated with better theme meta tags) ===== */
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,9 +9,22 @@
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-
-    <!-- Theme Color -->
-    <meta name="theme-color" content="#3b82f6">
+    
+    <!-- Theme Color (will be updated by JS) -->
+    <meta name="theme-color" content="#1a1a1a">
+    
+    <!-- PWA Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="AI Playground - Multi-AI Chat Platform">
+    <meta property="og:description" content="Chat with multiple AI models in one beautiful interface. Built with ❤️ for Devanshi and friends!">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ai-playground-frontend.netlify.app">
+    
+    <!-- Preload critical fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
 <body>
     <div class="app" id="app">
@@ -23,12 +37,13 @@
                 </div>
                 <div class="header__controls">
                     <div class="requests-count" id="requests-remaining">996 left</div>
+                    <!-- Theme switcher will be inserted here by JavaScript -->
                     <button class="btn btn--secondary btn--icon" id="settings-btn">⚙️</button>
                 </div>
             </div>
             <div class="stats-row">
-                Daily: <span id="daily-used">4</span> •
-                Rate: <span id="rate-limit">100</span>/hr •
+                Daily: <span id="daily-used">4</span> • 
+                Rate: <span id="rate-limit">100</span>/hr • 
                 Tokens: <span id="tokens-display">150</span>
             </div>
         </header>
@@ -60,8 +75,8 @@
         <!-- Input area will be replaced by MessageInput component -->
         <div class="input-area">
             <div class="input-container">
-                <textarea
-                    class="message-input"
+                <textarea 
+                    class="message-input" 
                     placeholder="Type your message..."
                     rows="1"
                 ></textarea>
@@ -74,3 +89,85 @@
     <script type="module" src="/src/main.js"></script>
 </body>
 </html>
+
+/* ===== Additional styles for better light theme support ===== */
+
+/* Light theme message improvements */
+:root[data-theme="light"] .message--user .message__content {
+  background: #3b82f6;
+  color: white;
+}
+
+:root[data-theme="light"] .message--ai .message__content {
+  background: #f8fafc;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+}
+
+:root[data-theme="light"] .message--error .message__content {
+  background: #dc2626;
+  color: white;
+}
+
+/* Light theme input improvements */
+:root[data-theme="light"] .input-container {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+}
+
+:root[data-theme="light"] .input-container:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+:root[data-theme="light"] .message-input {
+  color: #1f2937;
+}
+
+:root[data-theme="light"] .message-input::placeholder {
+  color: #9ca3af;
+}
+
+/* Light theme header improvements */
+:root[data-theme="light"] .header {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+:root[data-theme="light"] .model-bar {
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+:root[data-theme="light"] .model-select {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #1f2937;
+}
+
+/* Light theme welcome screen */
+:root[data-theme="light"] .welcome__title {
+  color: #1f2937;
+}
+
+:root[data-theme="light"] .welcome__description {
+  color: #6b7280;
+}
+
+:root[data-theme="light"] .welcome__description strong {
+  color: #1f2937;
+}
+
+/* Theme transition for smooth switching */
+.app,
+.header,
+.model-bar,
+.chat-container,
+.input-area,
+.message__content,
+.input-container {
+  transition: 
+    background-color var(--transition-normal),
+    color var(--transition-normal),
+    border-color var(--transition-normal);
+}

@@ -1,6 +1,6 @@
-/* src/styles/main.css - Main stylesheet that imports all others */
 
-/* Base styles */
+/* ===== src/styles/main.css (Updated to include theme switcher) ===== */
+/* Import all styles */
 @import './base/variables.css';
 @import './base/reset.css';
 @import './base/layout.css';
@@ -9,6 +9,7 @@
 @import './components/chat.css';
 @import './components/input.css';
 @import './components/settings.css';
+@import './components/theme-switcher.css';
 @import './layout/header.css';
 @import './layout/model-bar.css';
 @import './utilities/banner.css';
